@@ -7,7 +7,7 @@ export default defineConfig({
   title: 'Art Shop',
 
   // Paste your project ID from https://www.sanity.io/manage here
-  projectId: 'YOUR_PROJECT_ID',
+  projectId: 'uk9gulqh',
   dataset: 'production',
 
   plugins: [structureTool()],
