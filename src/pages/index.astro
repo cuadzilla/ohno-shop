@@ -1,0 +1,24 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getArtworks, imageUrl, usingSampleData } from '../lib/sanity.js';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const artworks = await getArtworks();
+---
+<Layout title="Art Shop">
+  {usingSampleData && (
+    <p><em>Showing sample data. Set SANITY_PROJECT_ID to load real pieces.</em></p>
+  )}
+  <h1>Gallery</h1>
+  <div class="grid">
+    {artworks.map((a) => (
+      <div class="card">
+        <a href={`${base}/art/${a.slug}/`}>
+          <img src={imageUrl(a.image, 600)} alt={a.title} loading="lazy" />
+          <h2>{a.title}</h2>
+        </a>
+        {a.sold ? <span class="badge">Sold</span> : <span>${a.price}</span>}
+      </div>
+    ))}
+  </div>
+</Layout>

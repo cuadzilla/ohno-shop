@@ -1,0 +1,45 @@
+---
+const { title = 'Art Shop' } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const snipcartKey = import.meta.env.SNIPCART_PUBLIC_KEY;
+const SNIPCART_VERSION = '3.7.1';
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    {snipcartKey && (
+      <link rel="preconnect" href="https://app.snipcart.com" />
+    )}
+    {snipcartKey && (
+      <link rel="stylesheet" href={`https://cdn.snipcart.com/themes/v${SNIPCART_VERSION}/default/snipcart.css`} />
+    )}
+    <style>
+      body { font-family: system-ui, sans-serif; margin: 0; color: #222; }
+      header, main { max-width: 960px; margin: 0 auto; padding: 1rem; }
+      header { display: flex; justify-content: space-between; align-items: center; }
+      header a { color: inherit; text-decoration: none; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
+      .card img, .piece img { width: 100%; height: auto; display: block; background: #eee; }
+      .card a { color: inherit; text-decoration: none; }
+      .badge { display: inline-block; background: #222; color: #fff; padding: 0.15rem 0.6rem; border-radius: 99px; font-size: 0.8rem; }
+      button { font: inherit; padding: 0.6rem 1.2rem; cursor: pointer; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <a href={`${base}/`}><strong>Art Shop</strong></a>
+      {snipcartKey && <button class="snipcart-checkout">Cart (<span class="snipcart-items-count">0</span>)</button>}
+    </header>
+    <main><slot /></main>
+
+    {snipcartKey && (
+      <>
+        <script is:inline src={`https://cdn.snipcart.com/themes/v${SNIPCART_VERSION}/default/snipcart.js`}></script>
+        <div hidden id="snipcart" data-api-key={snipcartKey}></div>
+      </>
+    )}
+  </body>
+</html>

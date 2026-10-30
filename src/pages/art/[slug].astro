@@ -1,0 +1,49 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getArtworks, imageUrl } from '../../lib/sanity.js';
+
+export async function getStaticPaths() {
+  const artworks = await getArtworks();
+  return artworks.map((a) => ({ params: { slug: a.slug }, props: { art: a } }));
+}
+
+const { art } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const snipcartKey = import.meta.env.SNIPCART_PUBLIC_KEY;
+
+// Snipcart crawls this exact URL to verify the price, so it must be the
+// public, absolute address of THIS page.
+const pageUrl = new URL(`${base}/art/${art.slug}/`, Astro.site).href;
+---
+<Layout title={art.title}>
+  <p><a href={`${base}/`}>&larr; Back to gallery</a></p>
+  <div class="piece">
+    <img src={imageUrl(art.image, 1200)} alt={art.title} />
+    <h1>{art.title}</h1>
+    {art.description && <p>{art.description}</p>}
+
+    {art.sold ? (
+      <span class="badge">Sold</span>
+    ) : (
+      <>
+        <p><strong>${art.price}</strong></p>
+        {snipcartKey ? (
+          <button
+            class="snipcart-add-item"
+            data-item-id={art._id}
+            data-item-name={art.title}
+            data-item-price={art.price}
+            data-item-url={pageUrl}
+            data-item-image={imageUrl(art.image, 600)}
+            data-item-description={art.description || ''}
+            data-item-max-quantity="1"
+          >
+            Add to cart
+          </button>
+        ) : (
+          <p><em>Cart not configured yet (set SNIPCART_PUBLIC_KEY).</em></p>
+        )}
+      </>
+    )}
+  </div>
+</Layout>
