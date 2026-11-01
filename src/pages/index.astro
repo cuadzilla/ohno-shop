@@ -1,24 +1,30 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { getArtworks, imageUrl, usingSampleData } from '../lib/sanity.js';
+import ProductCard from '../components/ProductCard.astro';
+import { site } from '../config.js';
+import { getArtworks, usingSampleData } from '../lib/sanity.js';
 
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const artworks = await getArtworks();
+const all = await getArtworks();
+// Available pieces first, sold pieces after (each group newest first).
+const artworks = [...all.filter((a) => !a.sold), ...all.filter((a) => a.sold)];
 ---
-<Layout title="Art Shop">
+<Layout title={site.name}>
   {usingSampleData && (
-    <p><em>Showing sample data. Set SANITY_PROJECT_ID to load real pieces.</em></p>
+    <p class="mb-6 rounded bg-amber-100 px-3 py-2 text-sm text-amber-900">
+      Showing sample data. Set SANITY_PROJECT_ID to load real pieces.
+    </p>
   )}
-  <h1>Gallery</h1>
-  <div class="grid">
-    {artworks.map((a) => (
-      <div class="card">
-        <a href={`${base}/art/${a.slug}/`}>
-          <img src={imageUrl(a.image, 600)} alt={a.title} loading="lazy" />
-          <h2>{a.title}</h2>
-        </a>
-        {a.sold ? <span class="badge">Sold</span> : <span>${a.price}</span>}
-      </div>
-    ))}
-  </div>
+
+  <section class="mb-8 sm:mb-12">
+    <h1 class="text-3xl font-semibold tracking-tight sm:text-4xl">{site.heading}</h1>
+    <p class="mt-2 max-w-xl text-stone-600">{site.tagline}</p>
+  </section>
+
+  {artworks.length === 0 ? (
+    <p class="text-stone-600">No pieces yet. Check back soon.</p>
+  ) : (
+    <div class="grid grid-cols-2 gap-x-3 gap-y-6 sm:gap-x-6 sm:gap-y-10 md:grid-cols-3 lg:gap-x-8">
+      {artworks.map((art) => <ProductCard art={art} />)}
+    </div>
+  )}
 </Layout>

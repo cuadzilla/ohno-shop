@@ -1,0 +1,33 @@
+---
+import { imageUrl, imageSrcSet } from '../lib/images.js';
+import { withBase } from '../lib/paths.js';
+import Price from './Price.astro';
+import SoldBadge from './SoldBadge.astro';
+
+const { art } = Astro.props;
+const href = withBase(`/art/${art.slug}/`);
+---
+<article class="group relative">
+  <div class="relative aspect-square overflow-hidden bg-stone-200">
+    <img
+      src={imageUrl(art.image, { width: 600, height: 600 })}
+      srcset={imageSrcSet(art.image, [300, 450, 600, 900], 1)}
+      sizes="(min-width: 768px) 33vw, 50vw"
+      alt={art.title}
+      width="600"
+      height="600"
+      loading="lazy"
+      class:list={['h-full w-full object-cover transition group-hover:opacity-90', { 'opacity-75': art.sold }]}
+    />
+    {art.sold && <SoldBadge class="absolute left-2 top-2" />}
+  </div>
+  <div class="mt-2 flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
+    <h3 class="text-sm font-medium leading-snug">
+      <a href={href}>
+        <span aria-hidden="true" class="absolute inset-0"></span>
+        {art.title}
+      </a>
+    </h3>
+    {!art.sold && <Price price={art.price} class="text-sm text-stone-600" />}
+  </div>
+</article>

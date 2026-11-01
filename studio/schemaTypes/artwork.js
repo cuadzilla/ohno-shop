@@ -21,10 +21,20 @@ export const artwork = defineType({
     }),
     defineField({
       name: 'image',
-      title: 'Photo',
+      title: 'Main photo',
+      description:
+        'Shown in the gallery as a square. After uploading, click the photo and drag the circle to choose what stays in the frame.',
       type: 'image',
       options: { hotspot: true },
       validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'gallery',
+      title: 'More photos',
+      description:
+        'Optional. Close-ups, side views, or the piece on a wall. Any shape works, and they appear in full on the piece\'s page.',
+      type: 'array',
+      of: [{ type: 'image', options: { hotspot: true } }],
     }),
     defineField({
       name: 'price',

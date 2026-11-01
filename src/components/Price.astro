@@ -1,0 +1,5 @@
+---
+import { formatPrice } from '../lib/format.js';
+const { price, class: className = '' } = Astro.props;
+---
+<span class={className}>{formatPrice(price)}</span>
